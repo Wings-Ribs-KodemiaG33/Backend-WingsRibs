@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs"
 import {createAccessToken} from "../libs/jwt.js"
 import jwt from "jsonwebtoken"
 import {TOKEN_SECRET} from "../secret.js"
+import app from "../app.js"
 
 export const register =  async (req, res) => {
     const {email,password,username, address, phone} = req.body;
@@ -44,7 +45,7 @@ if (userFound) return res.status(400).json(["El correo ya está en uso"])
 
 
 export const login =  async (req, res) => {
-    const {email,password} = req.body;
+    const { email, password} = req.body;
 
     try{
 
@@ -52,21 +53,19 @@ export const login =  async (req, res) => {
         const userFound = await Usuario.findOne({ email });
 
         //si no se encuentra el usuario que me mande el status
-        if(!userFound)return res.status(400).json({message: "Usuario no encontrado"});
+        if(!userFound) 
+            return res.status(400).json({ message: "Usuario no encontrado" });
 
         //variable de coincidencia
         const isMatch = await bcrypt.compare(password, userFound.password)
-         if(!isMatch)return res.status(400).json( {message: "Contraseña incorrecta"});
+         if(!isMatch)
+            return res.status(400).json( {message: "Contraseña incorrecta"});
 
-         const token = await createAccessToken({id: userFound._id}); 
+         const token = await createAccessToken({ id: userFound._id }); 
          
-          
-         res.cookie("token", token, {
-            httpOnly: true,
-            sameSite: 'none',
-            secure: true,
-            maxAge: 1000 *60 *60 //valido a una hora
-         }); //estableces una cookie en la respuesta
+         res
+         .status(202)
+         .cookie('token', token); //estableces una cookie en la respuesta
          //envias respuesta
          res.json({
             id: userFound._id,
@@ -79,6 +78,8 @@ export const login =  async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+
 
 export const logout = (req, res) =>{
     res.cookie("token", "",{
@@ -123,3 +124,5 @@ export const verifyToken = async (req, res) =>{
    })
 
 }
+
+

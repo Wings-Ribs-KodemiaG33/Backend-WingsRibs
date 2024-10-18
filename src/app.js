@@ -14,10 +14,14 @@ import itemRoutes from "./routes/items.routes.js";
 const app = express()
 
 
+    
+  
+
 app.use(cors({
     origin: "http://127.0.0.1:5173",
-    credentials: true
+    credentials: true,
 }));
+
 //muestra mensaje por consola por cada peticion al backend
 app.use(morgan("dev"));
 //interpretar el request body con formato JSON

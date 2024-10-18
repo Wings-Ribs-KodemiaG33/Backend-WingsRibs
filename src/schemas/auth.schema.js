@@ -32,3 +32,4 @@ export const loginSchema = z.object({
         message: "La contraseña debe tener mas de 6 caracteres",
       }),
 });
+
