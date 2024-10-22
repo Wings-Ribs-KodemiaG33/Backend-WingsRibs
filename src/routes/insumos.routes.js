@@ -1,6 +1,6 @@
 import express from "express";
 
-import {getInsumos, postInsumos} from "../controllers/insumos.controller.js";
+import {getInsumos, postInsumos, patchInsumo, deleteInsumo  } from "../controllers/insumos.controller.js";
 
 const router = express.Router();
 
