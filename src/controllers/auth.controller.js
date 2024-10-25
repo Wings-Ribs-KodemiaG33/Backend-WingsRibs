@@ -3,7 +3,11 @@ import bcrypt from "bcryptjs"
 import {createAccessToken} from "../libs/jwt.js"
 import jwt from "jsonwebtoken"
 import {TOKEN_SECRET} from "../secret.js"
+import OTP from "../models/userOTP.model.js"
 import app from "../app.js"
+
+
+
 
 export const register =  async (req, res) => {
     const {email,password,username, address, phone} = req.body;
@@ -13,7 +17,8 @@ const userFound = await Usuario.findOne({email})
 if (userFound) return res.status(400).json(["El correo ya está en uso"])
 
         const passwordHash = await bcrypt.hash(password, 10)//guardar variable de encriptado de contraseña
-
+        //verificacion OTP de correo
+       
 
         const newUser = new Usuario({
             username,
@@ -21,10 +26,19 @@ if (userFound) return res.status(400).json(["El correo ya está en uso"])
             password: passwordHash,
             address,
             phone,
+            //verified: false,
         });
+        //enviar vaidacion por emai
+        
     
         //guardar usuario en mondodb
-         const userSaved = await newUser.save(); //guardas el usuario
+         const userSaved = await newUser.save();
+          //guardas el usuario
+          //userSaved.then((result) =>{
+          //sendVerificationEmail(result, res)
+         //})
+         
+         
          const token = await createAccessToken({id:userSaved._id}); //creas el token
          
          res.cookie("token", token); //estableces una cookie en la respuesta
@@ -88,6 +102,7 @@ export const logout = (req, res) =>{
     return res.sendStatus(200)
 };
 
+
 export const profile = async (req,res) =>{
     const userFound = await Usuario.findById(req.user.id);
 
@@ -103,6 +118,8 @@ export const profile = async (req,res) =>{
 
     res.send("profile");
 }
+
+
 
 
 export const verifyToken = async (req, res) =>{
