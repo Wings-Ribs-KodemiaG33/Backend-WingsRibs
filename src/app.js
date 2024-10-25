@@ -11,6 +11,7 @@ import adminRoutes from "./routes/authad.routes.js";
 import managerRoutes from "./routes/authmg.routes.js";
 import itemRoutes from "./routes/items.routes.js";
 import orderRoutes from "./routes/orden.routes.js";
+import pedidoRoutes from "./routes/pedido.routes.js";
 
 const app = express();
 
@@ -32,5 +33,6 @@ app.use("/api", managerRoutes);
 // tambien la ruta de los items
 app.use("/api", itemRoutes);
 app.use("/api", orderRoutes);
+app.use("/api", pedidoRoutes);
 
 export default app;

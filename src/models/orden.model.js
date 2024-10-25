@@ -3,8 +3,8 @@ import mongoose from "mongoose";
 const itemSchema = new mongoose.Schema({
   name: String,
   price: Number,
-  detalle: String, // Campo para detalles del producto
-  imagen: String, // Campo para la imagen del producto
+  detalle: String,
+  imagen: String,
 });
 
 const orderSchema = new mongoose.Schema({
@@ -12,14 +12,14 @@ const orderSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  items: [itemSchema], // Usar el esquema de items
+  items: [itemSchema],
   details: {
-    type: String, // Campo adicional para detalles de la orden
+    type: String,
     required: false,
   },
   numberOfOrders: {
     type: Number,
-    default: 1, // Valor por defecto
+    default: 1,
     required: true,
   },
 });
