@@ -38,6 +38,10 @@ const itemSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
+    showitem:{
+        type: Boolean,
+        required: true,
+    },
     date: {
         type: Date,
         default: Date.now,

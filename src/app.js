@@ -6,19 +6,31 @@ import morgan from "morgan"
 import cookieParser from "cookie-parser";
 //importar cors , paquetes para autorizar conexiones de diferentes proxies
 import cors from "cors";
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import path from 'path';
+
 //importar auth.routes
 import authRoutes from "./routes/auth.routes.js";
 
 import itemRoutes from "./routes/items.routes.js";
 import insumosRoutes from "./routes/insumos.routes.js" //insumos
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 const app = express()
+app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
+
 
 
 app.use(cors({
     origin: ["http://localhost:5173", "http://127.0.0.1:5173"],
     credentials: true
 }));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+
 //muestra mensaje por consola por cada peticion al backend
 app.use(morgan("dev"));
 //interpretar el request body con formato JSON
