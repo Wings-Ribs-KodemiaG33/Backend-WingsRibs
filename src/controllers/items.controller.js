@@ -97,3 +97,16 @@ export const updateItems = async (req, res) => {
       res.status(500).json({ message: "Error al actualizar el producto" });
     }
 }
+
+export const updateShowItem = async (req, res) => {
+  try {
+    const item = await Productos.findByIdAndUpdate(req.params.id,
+      { showitem: req.body.showitem }, 
+      { new: true }
+  )
+    res.json(item);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al actualizar el producto" });
+  }
+}
