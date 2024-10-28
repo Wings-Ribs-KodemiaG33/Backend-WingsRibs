@@ -22,13 +22,13 @@ export const getListItems = async (req, res) => {
 export const createItem = async (req, res) => {
   console.log('Archivo recibido:', req.file);
   try {
-    const { item, subsidiary, price, discount, description, category, timecook, showitem} = req.body;
-    showitem = true;
+    const { item, subsidiary, price, discount, description, category, timecook} = req.body;
+    let showitem = true;
     
     //const photo = req.file ? req.file.path : null;
     const photo = req.file ? req.file.filename : null;
 
-    if (!item || !price || !description || !category || !timecook || !showitem) {
+    if (!item || !price || !description || !category || !timecook || showitem === undefined) {
       return res.status(400).json({ message: "Por favor, completa todos los campos obligatorios" });
     }
 
