@@ -3,14 +3,28 @@ import Order from "../models/orden.model.js";
 
 const router = express.Router();
 
+const generateOrderNumber = async () => {
+  const lastOrder = await Order.findOne().sort({ orderNumber: -1 });
+  return lastOrder ? lastOrder.orderNumber + 1 : 1; // Incrementa a partir del último número de orden
+};
+
 router.post("/orders", async (req, res) => {
-  const { orderNumber, items, details, numberOfOrders } = req.body;
-  const order = new Order({ orderNumber, items, details, numberOfOrders });
-  try {
-    await order.save();
-    res.status(201).json(order);
+  try{
+    const { items, client, total, details } = req.body;
+    const orderNumber = await generateOrderNumber();
+
+    const order = new Order({
+      orderNumber,
+      items,
+      client,
+      total,
+      details,
+    });
+    const savedOrder =  await order.save();
+    res.status(201).json(savedOrder);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    console.error("Error al crear el pedido:", error);
+    res.status(500).json({ message: "Error al crear el pedido" });
   }
 });
 
