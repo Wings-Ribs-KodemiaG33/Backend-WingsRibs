@@ -10,7 +10,7 @@ import app from "../app.js"
 
 
 export const register =  async (req, res) => {
-    const {email,password,username, address, phone} = req.body;
+    const {email, password, username} = req.body;
 
     try{
 const userFound = await Usuario.findOne({email})
@@ -103,6 +103,27 @@ export const logout = (req, res) =>{
 };
 
 
+
+//actuaizar usuario
+export const UpdateUser = async (req,res) => {
+   
+    try{
+
+        
+        const justUser = await Usuario.findByIdAndUpdate(req.params.id, req.body,
+            {
+                new: true,
+            }
+        )
+        if(!justUser) return res.status(404).json({message: "Usuario no encontrado"})
+        res.json(justUser)
+    }catch(error){
+        console.log(error)
+    }
+
+}
+
+
 export const profile = async (req,res) =>{
     const userFound = await Usuario.findById(req.user.id);
 
@@ -112,6 +133,8 @@ export const profile = async (req,res) =>{
         id: userFound._id,
         username: userFound.username,
         email: userFound.email,
+        address: userFound.address,
+        phone: userFound.phone,
         createdAt: userFound.createdAt,
         updatedAt: userFound.updatedAt,
     })

@@ -18,9 +18,11 @@ const userSchema = new mongoose.Schema({
     },
     address: {
         type: String,
+        required: true,
     },
     phone: {
         type: Number,
+        required: true,
     },
     roles:['user','admin','vendor'],
 },{
