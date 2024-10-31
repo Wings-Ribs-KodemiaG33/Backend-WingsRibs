@@ -9,7 +9,7 @@ const generateOrderNumber = async () => {
 };
 
 router.post("/orders", async (req, res) => {
-  try{
+  try {
     const { items, client, total, details } = req.body;
     const orderNumber = await generateOrderNumber();
 
@@ -20,7 +20,7 @@ router.post("/orders", async (req, res) => {
       total,
       details,
     });
-    const savedOrder =  await order.save();
+    const savedOrder = await order.save();
     res.status(201).json(savedOrder);
   } catch (error) {
     console.error("Error al crear el pedido:", error);

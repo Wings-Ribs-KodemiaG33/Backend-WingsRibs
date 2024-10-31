@@ -6,36 +6,36 @@ const itemSchema = new mongoose.Schema({
   price: Number,
   discount: Number,
   description: String,
-  qty:{
+  qty: {
     type: Number,
-    required: true
+    required: true,
   },
 });
 
 const clientSchema = new mongoose.Schema({
-  nameuser:{
+  name: {
     type: String,
-    required:undefined,
+    required: undefined,
     minLength: 5,
-    maxLenght:150,
+    maxLenght: 150,
   },
-  address:{
+  address: {
     type: String,
-    required:undefined,
+    required: undefined,
     minLength: 5,
-    maxLenght:150,
+    maxLenght: 150,
   },
-  cpnum:{
+  cpnum: {
     type: Number,
-    required:undefined,
+    required: undefined,
     Length: 5,
   },
-  phone:{
+  phone: {
     type: Number,
-    required:undefined,
+    required: undefined,
     Length: 10,
-  }
-})
+  },
+});
 
 const orderSchema = new mongoose.Schema({
   orderNumber: {
@@ -52,7 +52,7 @@ const orderSchema = new mongoose.Schema({
     default: 1,
     required: false,
   },
-  total:{
+  total: {
     type: Number,
     required: true,
   },
