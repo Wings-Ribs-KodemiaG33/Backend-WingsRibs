@@ -24,8 +24,7 @@ if (userFound) return res.status(400).json(["El correo ya está en uso"])
             username,
             email,
             password: passwordHash,
-            address,
-            phone,
+            
             //verified: false,
         });
         //enviar vaidacion por emai
@@ -104,24 +103,7 @@ export const logout = (req, res) =>{
 
 
 
-//actuaizar usuario
-export const UpdateUser = async (req,res) => {
-   
-    try{
 
-        
-        const justUser = await Usuario.findByIdAndUpdate(req.params.id, req.body,
-            {
-                new: true,
-            }
-        )
-        if(!justUser) return res.status(404).json({message: "Usuario no encontrado"})
-        res.json(justUser)
-    }catch(error){
-        console.log(error)
-    }
-
-}
 
 
 export const profile = async (req,res) =>{
