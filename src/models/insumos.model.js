@@ -10,4 +10,4 @@ const insumosSchema = new mongoose.Schema({
 // Exporta el modelo como una exportación por defecto
 const Insumos = mongoose.model('insumos', insumosSchema);
 
-export default Insumos;""
+export default Insumos;

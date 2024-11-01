@@ -15,5 +15,5 @@ connectDB()
     });
 })
 .catch((error) =>{
-    console.error("error de conexión:" , error);
+    console.error("error de conexión:" , error);
 });

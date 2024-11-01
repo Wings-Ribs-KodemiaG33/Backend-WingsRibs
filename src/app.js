@@ -22,6 +22,9 @@ import insumosRoutes from "./routes/insumos.routes.js" //insumos
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+
+import paymentRoutes from "./routes/payment.routes.js"; // Nueva ruta para pagos
+
 const app = express()
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 
@@ -42,6 +45,7 @@ app.use(
 //muestra mensaje por consola por cada peticion al backend
 app.use(morgan("dev"));
 //interpretar el request body con formato JSON
+
 app.use(express.json());
 app.use(cookieParser());
 
@@ -53,5 +57,9 @@ app.use("/api", managerRoutes);
 app.use("/api", itemRoutes);
 app.use("/api", orderRoutes);
 app.use("/api", pedidoRoutes);
+
+//Ruta de los insumos
 app.use("/api",insumosRoutes);
+app.use("/api", paymentRoutes);
+
 export default app;
