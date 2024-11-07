@@ -22,7 +22,19 @@ const userSchema = new mongoose.Schema({
     phone: {
         type: Number,
     },
-    roles:['user','admin','vendor'],
+    roles:{
+        type: [String], 
+        def:['user','admin','vendor'], 
+        required: true,
+    },
+    photo:{
+        type: String,
+        required:false,
+      },
+    subsidiary: {
+        type: String,
+        required:false,
+    }
 },{
     timestamps: true
 })

@@ -1,1 +1,1 @@
-export const TOKEN_SECRET = "some secret key"
+export const TOKEN_SECRET = "this-is-a-awesome-secret-key-for-this-page"

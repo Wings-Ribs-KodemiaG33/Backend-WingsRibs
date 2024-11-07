@@ -13,7 +13,7 @@ const subsidiarySchema = new mongoose.Schema({
         minLength: 5,
         maxLenght:100,
     },
-    colony:{
+    town:{
         type: String,
         required : true,
         minLength: 5,
@@ -25,21 +25,26 @@ const subsidiarySchema = new mongoose.Schema({
         minLength: 5,
         maxLenght:100,
     },
-    email:{
-        type: String,
-        required: true,
-        match: /[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/,
-        unique: true
+    cpnum: {
+        type: Number,
+        required : true,
+        length: 5,
     },
     phone: {
         type: Number,
         required: true,
         validate: {
             validator: function(v) {
-                return v.length === 10;  // Validador para longitud exacta
+                return v.toString().length === 10; 
             },
-            message: props => `${props.value} `
+            message: props => `${props.value} no tiene 10 dígitos`
         }
+    },
+    email:{
+        type: String,
+        required: true,
+        match: /[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/,
+        unique: true
     }
     
 })
