@@ -20,9 +20,14 @@ import insumosRoutes from "./routes/insumos.routes.js"
 import paymentRoutes from "./routes/payment.routes.js"; 
 import subsidiaryRoutes from "./routes/sucursales.routes.js";
 
+const { OAuth2Client } = require('google-auth-library');
+const client = new OAuth2Client();
+const PORT = 5000;
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const app = express()
+
 app.use(cors({
     origin: ["http://localhost:5173", "http://127.0.0.1:5173"],
     credentials: true,
@@ -33,6 +38,7 @@ app.use(morgan("dev"));
 
 app.use(express.json());
 app.use(cookieParser());
+
 
 
 app.use("/api", authRoutes);

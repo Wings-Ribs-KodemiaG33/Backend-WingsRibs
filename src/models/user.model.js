@@ -34,7 +34,11 @@ const userSchema = new mongoose.Schema({
     subsidiary: {
         type: String,
         required:false,
-    }
+    },
+    authSource: {
+        enum: ["self", "google"],
+        default: "self"
+        }
 },{
     timestamps: true
 })

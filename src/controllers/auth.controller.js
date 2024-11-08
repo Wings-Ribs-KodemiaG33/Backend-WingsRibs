@@ -6,7 +6,22 @@ import {TOKEN_SECRET} from "../secret.js"
 import OTP from "../models/userOTP.model.js"
 import app from "../app.js"
 
+app.post("/google-auth", async (req, res) => {
+    const { credential, client_id } = req.body;
+    try {
+        const ticket = await client.verifyIdToken({
+        idToken: credential,
+        audience: client_id,
+    });
+        const payload = ticket.getPayload();
+        const userid = payload['sub'];
+        res.status(200).json({ payload });
+    } catch (err) {
+        
+    }
+});
 
+app.listen(PORT, () => console.log(`Server running on PORT : ${PORT}`));
 
 
 export const register =  async (req, res) => {
@@ -26,11 +41,11 @@ export const register =  async (req, res) => {
             password: passwordHash,
             roles: [role],
             photo,
+            authSource: 'google',
             //verified: false,
         });
         //enviar vaidacion por emai
-        
-    
+ 
         //guardar usuario en mondodb
          const userSaved = await newUser.save();
           //guardas el usuario
@@ -57,6 +72,7 @@ export const register =  async (req, res) => {
         }catch(error){
         res.status(500).json({ message: error.message });
     }
+
 };
 
 export const showSellers = async(req,res)=>{
