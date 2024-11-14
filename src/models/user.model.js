@@ -16,8 +16,23 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    address: {
+    street: {
         type: String,
+        minLength: 5,
+        maxLenght:100,
+    },
+    number: {
+        type: Number,
+    },
+    colony:{
+        type: String,
+        minLength: 5,
+        maxLenght:100,
+    },
+    cpnum:{
+        type: Number,
+        required : true,
+        length: 5,
     },
     phone: {
         type: Number,
@@ -35,10 +50,9 @@ const userSchema = new mongoose.Schema({
         type: String,
         required:false,
     },
-    authSource: {
-        enum: ["self", "google"],
-        default: "self"
-        }
+    points:{
+        type: Number
+    }
 },{
     timestamps: true
 })

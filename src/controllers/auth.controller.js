@@ -1,12 +1,13 @@
+import jwt from "jsonwebtoken"
+import {TOKEN_SECRET} from "../secret.js"
 import Usuario from "../models/user.model.js"
 import bcrypt from "bcryptjs"
 import {createAccessToken} from "../libs/jwt.js"
-import jwt from "jsonwebtoken"
-import {TOKEN_SECRET} from "../secret.js"
 import OTP from "../models/userOTP.model.js"
 import app from "../app.js"
+import { number } from "zod"
 
-app.post("/google-auth", async (req, res) => {
+/*app.post("/google-auth", async (req, res) => {
     const { credential, client_id } = req.body;
     try {
         const ticket = await client.verifyIdToken({
@@ -19,9 +20,9 @@ app.post("/google-auth", async (req, res) => {
     } catch (err) {
         
     }
-});
+});*/
 
-app.listen(PORT, () => console.log(`Server running on PORT : ${PORT}`));
+//app.listen(PORT, () => console.log(`Server running on PORT : ${PORT}`));
 
 
 export const register =  async (req, res) => {
@@ -56,9 +57,20 @@ export const register =  async (req, res) => {
          
          const token = await createAccessToken({id:userSaved._id}); //creas el token
          
-         res.cookie("token", token); //estableces una cookie en la respuesta
-         //envias respuesta
-         res.json({
+         if (!token) {
+            return res.status(500).json({ message: "Error al generar el token" });
+          }
+
+         res
+            .status(202)
+            .cookie('token', token, {
+                httpOnly: false,
+                secure: false, 
+                path: '/', 
+                sameSite: 'None',
+                maxAge: 3600000,
+            })
+            .json({
             id: userSaved._id,
             username: userSaved.username,
             email: userSaved.email,
@@ -74,6 +86,8 @@ export const register =  async (req, res) => {
     }
 
 };
+
+
 
 export const showSellers = async(req,res)=>{
     try {
@@ -118,16 +132,22 @@ export const login =  async (req, res) => {
          const token = await createAccessToken({ id: userFound._id }); 
          
          res
-         .status(202)
-         .cookie('token', token); //estableces una cookie en la respuesta
-         //envias respuesta
-         res.json({
-            id: userFound._id,
-            username: userFound.username,
-            email: userFound.email,
-            createdAt: userFound.createdAt,
-            updatedAt: userFound.updatedAt,
-         });
+            .status(202)
+            .cookie('token', token, {
+                httpOnly: false,
+                secure: false, 
+                path: '/', 
+                sameSite: 'None',
+                maxAge: 3600000,
+            })
+            .json({
+                token,
+                id: userFound._id,
+                username: userFound.username,
+                email: userFound.email,
+                createdAt: userFound.createdAt,
+                updatedAt: userFound.updatedAt,
+            });
         }catch(error){
         res.status(500).json({ message: error.message });
     }
@@ -136,59 +156,94 @@ export const login =  async (req, res) => {
 
 
 export const logout = (req, res) =>{
+    localStorage.removeItem('token');
     res.cookie("token", "",{
+        httpOnly: false, 
+        secure: false, 
+        path: '/',
+        sameSite: 'None',
         expires: new Date(0),
     });
+    
     return res.sendStatus(200)
 };
 
 
-
-//actuaizar usuario
-/*export const UpdateUser = async (req,res) => {
-   
-    try{
-
-        
-        const justUser = await Usuario.findByIdAndUpdate(req.params.id, req.body,
-            {
-                new: true,
-            }
-        )
-        if(!justUser) return res.status(404).json({message: "Usuario no encontrado"})
-        res.json(justUser)
-    }catch(error){
-        console.log(error)
-    }
-
-} */
-
-
+// get info para pagina de profile
 export const profile = async (req,res) =>{
-    const userFound = await Usuario.findById(req.user.id);
-
-    if(!userFound)return res.status(400).json({message: "Usuario no encontrado"});
-   
-    return res.json({
-        id: userFound._id,
-        username: userFound.username,
-        email: userFound.email,
-        address: userFound.address,
-        phone: userFound.phone,
-        createdAt: userFound.createdAt,
-        updatedAt: userFound.updatedAt,
-    })
-
-    res.send("profile");
+    const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
+    if (!token) {
+        return res.status(401).json({ message: "No autorizado" });
+      }
+      
+      jwt.verify(token, TOKEN_SECRET, async (err, user) => {
+        if (err) {
+          return res.status(401).json({ message: "No autorizado" });
+        }
+    
+        // Si el token es válido, busca el usuario en la base de datos
+        const userFound = await Usuario.findById(user.id);
+        if (!userFound) {
+          return res.status(401).json({ message: "No autorizado" });
+        }
+    
+        // Si todo está bien, retorna los datos del usuario
+        return res.json({
+          id: userFound._id,
+          username: userFound.username,
+          email: userFound.email,
+          street: userFound.street,
+          number: userFound.number,
+          colony: userFound.colony,
+          cpnum: userFound.cpnum,
+          phone: userFound.phone,
+          createdAt: userFound.createdAt,
+          updatedAt: userFound.updatedAt,
+        });
+      });
 }
 
+//put info pagina de profile
+export const updatedUser = async(req, res)=>{
+    const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
+    if (!token) {
+        return res.status(401).json({ message: "No autorizado" });
+    }
+      
+    jwt.verify(token, TOKEN_SECRET, async (err, decodedUser) => {
+        if (err) {
+          return res.status(401).json({ message: "No autorizado" });
+        }
 
+        try {
+            // Buscar al usuario en la base de datos
+            const userFound = await Usuario.findById(decodedUser.id);
+            if (!userFound) {
+              return res.status(404).json({ message: "Usuario no encontrado" });
+            }
+      
+            // Si hay un archivo (foto), actualizamos el campo `photo` en `req.body`
+            if (req.file) {
+              const photoPath = req.file.filename;
+              req.body.photo = photoPath;
+            }
+      
+            // Actualización de los datos del usuario
+            const updatedUser = await Usuario.findByIdAndUpdate(decodedUser.id, req.body, {
+              new: true,
+            });
+      
+            // Responder con los datos actualizados
+            res.json(updatedUser);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: "Error al actualizar el usuario" });
+        }
+    });
+}
 
-
-
-
-export const verifyToken = async (req, res) =>{
-   const {token} = req.cookies
+export const verifyToken = async (req, res ) =>{
+    const token = req.headers.authorization?.split(" ")[1] || req.cookies.token; 
 
    if(!token) return res.status(401).json({message: "No autorizado"});
 
@@ -205,6 +260,6 @@ export const verifyToken = async (req, res) =>{
     })
    })
 
-}
-
+  };
+  
 

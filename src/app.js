@@ -20,7 +20,7 @@ import insumosRoutes from "./routes/insumos.routes.js"
 import paymentRoutes from "./routes/payment.routes.js"; 
 import subsidiaryRoutes from "./routes/sucursales.routes.js";
 
-const { OAuth2Client } = require('google-auth-library');
+import { OAuth2Client } from 'google-auth-library';
 const client = new OAuth2Client();
 const PORT = 5000;
 

@@ -68,15 +68,7 @@ export const deleteItem = async (req, res) => {
 
 //actualizar item
 export const updateItems = async (req, res) => {
-
-    /*const item = await Productos.findByIdAndUpdate(req.params.id, req.body,
-        {
-            new: true
-        }
-    )
-    if(!item) return res.status(404).json({message: "Producto no encontrado"})
-    res.json(item)*/
-
+  
     try {
       const { id } = req.params;
       let item = await Productos.findById(id);
